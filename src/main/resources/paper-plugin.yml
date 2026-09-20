@@ -1,0 +1,29 @@
+name: $name
+version: $version
+main: me.onlyjordon.capehider.CapeHider
+api-version: "$apiVersion"
+folia-supported: true
+description: $description
+commands:
+  togglecape:
+    description: Toggle cape visibility for yourself or another player.
+    usage: /togglecape [player]
+    permission: capehider.togglecape
+permissions:
+  capehider.togglecape:
+    description: Allows use of /togglecape.
+    default: op
+  capehider.togglecape.self:
+    description: Toggle your own cape.
+    default: op
+  capehider.togglecape.others:
+    description: Toggle another player's cape.
+    default: op
+  capehider.bypass:
+    description: Skip having the cape hidden on join.
+    default: false
+dependencies:
+  server:
+    nicknamer-api:
+      required: true
+      load: BEFORE
