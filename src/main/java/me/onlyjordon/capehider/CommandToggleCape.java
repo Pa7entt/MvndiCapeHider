@@ -47,9 +47,16 @@ public final class CommandToggleCape implements CommandExecutor, TabCompleter {
             sender.sendMessage(PLAYER_NOT_FOUND);
             return true;
         }
-        boolean nowVisible = plugin.toggleCape(target);
-        sender.sendMessage(Component.text(target.getName() + "'s cape is now " + (nowVisible ? "visible" : "hidden") + ".",
-                nowVisible ? NamedTextColor.GREEN : NamedTextColor.YELLOW));
+        // Folia: profile updates must happen on the target's owning region
+        // thread. The sender (player or console) may not be on that thread,
+        // so run the toggle on the target's entity scheduler. Adventure's
+        // sendMessage is thread-safe, so replying from inside is fine.
+        target.getScheduler().run(plugin, task -> {
+            boolean nowVisible = plugin.toggleCape(target);
+            sender.sendMessage(Component.text(target.getName() + "'s cape is now "
+                    + (nowVisible ? "visible" : "hidden") + ".",
+                    nowVisible ? NamedTextColor.GREEN : NamedTextColor.YELLOW));
+        }, () -> sender.sendMessage(PLAYER_NOT_FOUND));
         return true;
     }
 

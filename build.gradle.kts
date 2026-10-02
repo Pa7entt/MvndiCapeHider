@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.onlyjordon"
-version = "2.0.0"
+version = "2.0.1"
 description = "Hide all capes via Paper's native SkinParts API — no external dependencies"
 
 var mainMinecraftVersion = "1.21.11"
@@ -21,7 +21,10 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+    // Stay on the Java 21 baseline required by Paper/Folia 1.21.x so release
+    // jars run on Java 21 servers (a higher toolchain also emits higher
+    // class-file versions, breaking Java 21 runtimes).
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 tasks {

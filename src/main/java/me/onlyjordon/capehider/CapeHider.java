@@ -30,9 +30,16 @@ public final class CapeHider extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        // Best-effort restore. On Folia this runs on the shutdown thread, so a
+        // profile update may be rejected by the region scheduler — that is fine:
+        // textures are re-fetched from the session servers on the next join,
+        // and onJoin re-applies the hide anyway.
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (hiddenCapes.contains(player.getUniqueId())) {
-                restoreCape(player);
+                try {
+                    restoreCape(player);
+                } catch (Exception ignored) {
+                }
             }
         }
     }
@@ -46,7 +53,10 @@ public final class CapeHider extends JavaPlugin implements Listener {
         if (textures != null && textures.getCape() != null) {
             originalCapes.put(player.getUniqueId(), textures.getCape());
         }
-        Bukkit.getScheduler().runTaskLater(this, () -> hideCape(player), 1L);
+        // Folia: the global Bukkit scheduler is not supported there and throws
+        // UnsupportedOperationException. The entity scheduler works on both
+        // Paper and Folia and runs the task on the player's owning region thread.
+        player.getScheduler().runDelayed(this, task -> hideCape(player), null, 1L);
     }
 
     @EventHandler
