@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("com.gradleup.shadow") version "9.4.1"
+    id("xyz.jpenilla.run-paper") version "3.1.0" // Paper server for testing/hotloading JVM
 }
 
 group = "me.onlyjordon"
@@ -20,7 +21,7 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
 tasks {
@@ -42,4 +43,12 @@ tasks {
             expand(props)
         }
     }
+
+    runServer {
+        downloadPlugins {
+
+        }
+        minecraftVersion("$mainMinecraftVersion")
+    }
+    runPaper.folia.registerTask()
 }
